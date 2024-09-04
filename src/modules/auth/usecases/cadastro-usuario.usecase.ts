@@ -1,14 +1,23 @@
 import { BadRequestException, Inject } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { Payload } from 'src/interfaces/payload.interface';
 import { Usecase } from 'src/interfaces/usecase.interface';
 import { UsuarioEntity } from 'src/modules/usuarios/entities/usuario.entity';
 import { UsuarioRepository } from 'src/modules/usuarios/repositories/usuario.repository';
 import { VendedorEntity } from 'src/modules/vendedores/entities/vendedor.entity';
 import { CadastroDto } from '../dto/cadastro.dto';
 
-export class CadastroUsuarioUsecase implements Usecase<CadastroDto> {
+type CadastroUsuarioUsecaseOutput = {
+  token: string;
+};
+
+export class CadastroUsuarioUsecase
+  implements Usecase<CadastroDto, CadastroUsuarioUsecaseOutput>
+{
   constructor(
     @Inject(UsuarioRepository)
     private readonly usuarioRepository: UsuarioRepository,
+    private readonly jwtService: JwtService,
   ) {}
 
   async execute({
@@ -17,7 +26,7 @@ export class CadastroUsuarioUsecase implements Usecase<CadastroDto> {
     senha,
     permissao,
     vendedor_nome,
-  }: CadastroDto): Promise<void> {
+  }: CadastroDto): Promise<CadastroUsuarioUsecaseOutput> {
     const usuarioComMesmoEmail =
       await this.usuarioRepository.buscarPorEmail(email);
 
@@ -41,5 +50,23 @@ export class CadastroUsuarioUsecase implements Usecase<CadastroDto> {
     }
 
     await this.usuarioRepository.criar(usuarioEntity);
+
+    return this.presentOutput(usuarioEntity);
+  }
+
+  private async presentOutput(
+    usuarioEntity: UsuarioEntity,
+  ): Promise<CadastroUsuarioUsecaseOutput> {
+    const payload: Payload = {
+      id: usuarioEntity.id,
+      vendedor_id: usuarioEntity.vendedor.id,
+      email: usuarioEntity.email,
+      nome: usuarioEntity.nome,
+      permissao: usuarioEntity.permissao,
+    };
+
+    const token = await this.jwtService.signAsync(payload);
+
+    return { token };
   }
 }
