@@ -41,17 +41,21 @@ export class CadastroUsuarioUsecase
       permissao,
     });
 
-    if (permissao === 'VENDEDOR') {
-      if (vendedor_nome?.length < 3)
-        throw new BadRequestException(['nome do vendedor inválido']);
+    if (usuarioEntity.isLeft())
+      throw new BadRequestException(usuarioEntity.value);
 
+    if (permissao === 'VENDEDOR') {
       const vendedorEntity = VendedorEntity.create({ nome: vendedor_nome });
-      usuarioEntity.vendedor = vendedorEntity;
+
+      if (vendedorEntity.isLeft())
+        throw new BadRequestException(vendedorEntity.value);
+
+      usuarioEntity.value.vendedor = vendedorEntity.value;
     }
 
-    await this.usuarioRepository.criar(usuarioEntity);
+    await this.usuarioRepository.criar(usuarioEntity.value);
 
-    return this.presentOutput(usuarioEntity);
+    return this.presentOutput(usuarioEntity.value);
   }
 
   private async presentOutput(
@@ -59,7 +63,7 @@ export class CadastroUsuarioUsecase
   ): Promise<CadastroUsuarioUsecaseOutput> {
     const payload: Payload = {
       id: usuarioEntity.id,
-      vendedor_id: usuarioEntity.vendedor.id,
+      vendedor_id: usuarioEntity?.vendedor?.id,
       email: usuarioEntity.email,
       nome: usuarioEntity.nome,
       permissao: usuarioEntity.permissao,

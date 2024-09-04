@@ -12,15 +12,15 @@ export class UsuarioRepository implements IUsuarioRepository {
 
   async criar(usuarioEntity: UsuarioEntity): Promise<void> {
     const vendedor =
-      usuarioEntity.permissao === 'CLIENTE'
-        ? null
-        : {
+      usuarioEntity.permissao === 'VENDEDOR' && usuarioEntity.vendedor
+        ? {
             create: {
               vdd_id: usuarioEntity.vendedor.id,
               vdd_nome: usuarioEntity.vendedor.nome,
               vdd_avaliacao: 0,
             },
-          };
+          }
+        : {};
 
     await this.prisma.usuario.create({
       data: {
@@ -43,19 +43,22 @@ export class UsuarioRepository implements IUsuarioRepository {
 
     if (!usuarioDb) return left(null);
 
-    const vendedorEntity = VendedorEntity.with({
-      id: usuarioDb.vendedor.vdd_id,
-      nome: usuarioDb.vendedor.vdd_nome,
-    });
-
     const usuarioEntity = UsuarioEntity.with({
       id: usuarioDb.usr_id,
       nome: usuarioDb.usr_nome,
       email: usuarioDb.usr_email,
       permissao: usuarioDb.usr_permissao,
       valor_saldo: usuarioDb.usr_valor_saldo,
-      vendedor: vendedorEntity,
     });
+
+    if (usuarioEntity.permissao === 'VENDEDOR' && usuarioDb.vendedor) {
+      const vendedorEntity = VendedorEntity.with({
+        id: usuarioDb.vendedor.vdd_id,
+        nome: usuarioDb.vendedor.vdd_nome,
+      });
+
+      usuarioEntity.vendedor = vendedorEntity;
+    }
 
     return right(usuarioEntity);
   }

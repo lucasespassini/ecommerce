@@ -1,7 +1,7 @@
 import { ZodRawShape, z } from 'zod';
 import { Either, left, right } from './either';
 
-export const validate = <T extends ZodRawShape>(
+export const validateSchema = <T extends ZodRawShape>(
   schema: z.ZodObject<T>,
   value: z.infer<typeof schema>,
 ): Either<string[], null> => {

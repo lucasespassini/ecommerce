@@ -8,20 +8,20 @@ import {
 } from 'class-validator';
 
 export class CadastroDto {
-  @IsEmail()
+  @IsEmail({}, { message: '$property inválido' })
   email: string;
 
-  @IsString()
+  @IsString({ message: '$property inválido' })
   nome: string;
 
-  @IsString()
-  @MinLength(5)
+  @IsString({ message: '$property inválida' })
+  @MinLength(5, { message: '$property deve ter pelo menos 5 caracteres' })
   senha: string;
 
   @IsIn(['CLIENTE', 'VENDEDOR'])
   permissao: Permissao;
 
   @IsOptional()
-  @IsString()
+  @IsString({ message: '$property inválida' })
   vendedor_nome: string;
 }

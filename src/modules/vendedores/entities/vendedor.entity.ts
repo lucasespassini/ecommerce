@@ -1,11 +1,18 @@
+import { Either, left, right } from 'src/utils/either';
+import { validateSchema } from 'src/utils/validateSchema';
 import { ulid } from 'ulid';
+import { z } from 'zod';
 
-type VendedorEntityProps = {
-  id: string;
-  nome: string;
-};
+export const vendedorEntitySchema = z.object({
+  id: z.string().ulid('id inválido'),
+  nome: z
+    .string({ message: 'nome do vendedor inválido' })
+    .min(3, { message: 'nome do vendedor inválido' }),
+});
 
-export class VendedorEntity {
+type VendedorEntityProps = z.infer<typeof vendedorEntitySchema>;
+
+export class VendedorEntity implements VendedorEntityProps {
   id: string;
   nome: string;
 
@@ -13,8 +20,16 @@ export class VendedorEntity {
     Object.assign(this, props);
   }
 
-  static create(props: Omit<VendedorEntityProps, 'id'>) {
-    return new VendedorEntity({ ...props, id: ulid() });
+  static create(
+    props: Omit<VendedorEntityProps, 'id'>,
+  ): Either<string[], VendedorEntity> {
+    const vendedorEntity = new VendedorEntity({ ...props, id: ulid() });
+
+    const result = validateSchema(vendedorEntitySchema, vendedorEntity);
+
+    if (result.isLeft()) return left(result.value);
+
+    return right(vendedorEntity);
   }
 
   static with(props: VendedorEntityProps) {
