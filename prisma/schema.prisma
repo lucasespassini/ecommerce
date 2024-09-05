@@ -55,16 +55,16 @@ model UsuarioDepositoHistorico {
 }
 
 model Avaliacao {
-  avl_id              String    @id @db.Char(26)
-  avl_usr_id          String    @db.Char(26)
-  avl_vdd_id          String?   @db.Char(26)
-  avl_prd_id          String?   @db.Char(26)
-  avl_estrelas        Int       @db.UnsignedTinyInt
-  avl_comentario      String?   @db.VarChar(100)
-  avl_data_comentario DateTime  @default(dbgenerated("CURRENT_TIMESTAMP")) @db.DateTime()
-  usuario             Usuario   @relation(fields: [avl_usr_id], references: [usr_id])
-  produto             Produto?  @relation(fields: [avl_prd_id], references: [prd_id])
-  vendedor            Vendedor? @relation(fields: [avl_vdd_id], references: [vdd_id])
+  avl_id             String    @id @db.Char(26)
+  avl_usr_id         String    @db.Char(26)
+  avl_vdd_id         String?   @db.Char(26)
+  avl_prd_id         String?   @db.Char(26)
+  avl_estrelas       Int       @db.UnsignedTinyInt
+  avl_comentario     String?   @db.VarChar(100)
+  avl_data_avaliacao DateTime  @default(dbgenerated("CURRENT_TIMESTAMP")) @db.DateTime()
+  usuario            Usuario   @relation(fields: [avl_usr_id], references: [usr_id])
+  produto            Produto?  @relation(fields: [avl_prd_id], references: [prd_id])
+  vendedor           Vendedor? @relation(fields: [avl_vdd_id], references: [vdd_id])
 
   @@map("avaliacoes")
 }
