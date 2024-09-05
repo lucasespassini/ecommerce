@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { compareSync, hashSync } from 'bcrypt';
-import { IUsuarioRepository } from 'src/interfaces/usuario-repository.interface';
+import { IUsuarioRepository } from 'src/interfaces/repositories/usuario-repository.interface';
 import { PrismaService } from 'src/modules/prisma/prisma.service';
 import { VendedorEntity } from 'src/modules/vendedores/entities/vendedor.entity';
 import { Either, left, right } from 'src/utils/either';

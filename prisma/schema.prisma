@@ -81,9 +81,9 @@ model Produto {
 }
 
 model ProdutoVigenciaValor {
-  pvv_id             String   @id
+  pvv_id             String   @id @db.Char(26)
   pvv_prd_id         String   @db.Char(26)
-  pvv_valor_vigencia Int      @db.SmallInt
+  pvv_valor_vigencia Decimal  @db.Decimal(10, 2)
   pvv_data_inicio    DateTime @default(dbgenerated("CURRENT_TIMESTAMP")) @db.DateTime
   produto            Produto  @relation(fields: [pvv_prd_id], references: [prd_id])
   compras            Compra[]

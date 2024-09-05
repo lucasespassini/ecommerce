@@ -62,11 +62,14 @@ export class CadastroUsuarioUsecase
   ): Promise<CadastroUsuarioUsecaseOutput> {
     const payload: Payload = {
       id: usuarioEntity.id,
-      vendedor_id: usuarioEntity?.vendedor?.id,
       email: usuarioEntity.email,
       nome: usuarioEntity.nome,
       permissao: usuarioEntity.permissao,
     };
+
+    if (usuarioEntity.permissao === 'VENDEDOR' && usuarioEntity.vendedor) {
+      payload.vendedor = usuarioEntity.vendedor;
+    }
 
     const token = await this.jwtService.signAsync(payload);
 
