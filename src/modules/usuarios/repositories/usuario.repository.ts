@@ -48,7 +48,7 @@ export class UsuarioRepository implements IUsuarioRepository {
       nome: usuarioDb.usr_nome,
       email: usuarioDb.usr_email,
       permissao: usuarioDb.usr_permissao,
-      valor_saldo: usuarioDb.usr_valor_saldo,
+      valor_saldo: usuarioDb.usr_valor_saldo.toNumber(),
       senha: usuarioDb.usr_senha,
     });
 

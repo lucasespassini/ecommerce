@@ -21,7 +21,7 @@ enum Permissao {
 model Usuario {
   usr_id                      String                     @id @db.Char(26)
   usr_nome                    String                     @db.VarChar(100)
-  usr_valor_saldo             Int                        @default(0) @db.UnsignedMediumInt
+  usr_valor_saldo             Decimal                    @default(0) @db.Decimal(10, 2)
   usr_email                   String                     @unique @db.VarChar(100)
   usr_senha                   String                     @db.VarChar(100)
   usr_permissao               Permissao
@@ -44,11 +44,11 @@ model Vendedor {
 }
 
 model UsuarioDepositoHistorico {
-  cdh_id     String   @id @db.Char(26)
-  cdh_usr_id String   @db.Char(26)
-  cdh_valor  Int      @db.UnsignedSmallInt
-  cdh_data   DateTime @default(dbgenerated("CURRENT_TIMESTAMP")) @db.DateTime
-  usuario    Usuario  @relation(fields: [cdh_usr_id], references: [usr_id])
+  udh_id            String   @id @db.Char(26)
+  udh_usr_id        String   @db.Char(26)
+  udh_valor         Int      @db.UnsignedSmallInt
+  udh_data_deposito DateTime @default(dbgenerated("CURRENT_TIMESTAMP")) @db.DateTime
+  usuario           Usuario  @relation(fields: [udh_usr_id], references: [usr_id])
 
   @@map("usuario_deposito_historico")
 }
@@ -58,7 +58,7 @@ model Compra {
   cmp_usr_id             String               @db.Char(26)
   cmp_prd_id             String               @db.Char(26)
   cmp_pvv_id             String               @db.Char(26)
-  cmp_data               DateTime             @db.DateTime
+  cmp_data_compra        DateTime             @db.DateTime
   usuario                Usuario              @relation(fields: [cmp_usr_id], references: [usr_id])
   produto                Produto              @relation(fields: [cmp_prd_id], references: [prd_id])
   produto_vigencia_valor ProdutoVigenciaValor @relation(fields: [cmp_pvv_id], references: [pvv_id])
