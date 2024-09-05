@@ -1,5 +1,6 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { CadastroDto } from './dto/cadastro.dto';
+import { LoginDto } from './dto/login.dto';
 import { CadastroUsuarioUsecase } from './usecases/cadastro-usuario.usecase';
 import { LoginUsuarioUsecase } from './usecases/login-usuario.usecase';
 
@@ -16,7 +17,7 @@ export class AuthController {
   }
 
   @Post('/login')
-  login() {
-    return this.loginUsuarioUsecase.execute();
+  login(@Body() loginDto: LoginDto) {
+    return this.loginUsuarioUsecase.execute(loginDto);
   }
 }

@@ -7,12 +7,11 @@ import { UsuarioRepository } from 'src/modules/usuarios/repositories/usuario.rep
 import { VendedorEntity } from 'src/modules/vendedores/entities/vendedor.entity';
 import { CadastroDto } from '../dto/cadastro.dto';
 
-type CadastroUsuarioUsecaseOutput = {
-  token: string;
-};
+type CadastroUsuarioUsecaseInput = CadastroDto;
+type CadastroUsuarioUsecaseOutput = { token: string };
 
 export class CadastroUsuarioUsecase
-  implements Usecase<CadastroDto, CadastroUsuarioUsecaseOutput>
+  implements Usecase<CadastroUsuarioUsecaseInput, CadastroUsuarioUsecaseOutput>
 {
   constructor(
     @Inject(UsuarioRepository)
@@ -26,7 +25,7 @@ export class CadastroUsuarioUsecase
     senha,
     permissao,
     vendedor_nome,
-  }: CadastroDto): Promise<CadastroUsuarioUsecaseOutput> {
+  }: CadastroUsuarioUsecaseInput): Promise<CadastroUsuarioUsecaseOutput> {
     const usuarioComMesmoEmail =
       await this.usuarioRepository.buscarPorEmail(email);
 

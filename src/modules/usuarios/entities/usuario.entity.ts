@@ -26,7 +26,7 @@ export class UsuarioEntity implements UsuarioEntityProps {
   id: string;
   nome: string;
   email: string;
-  senha: string;
+  senha?: string;
   valor_saldo: number;
   permissao: Permissao;
   vendedor?: VendedorEntity;
@@ -51,7 +51,7 @@ export class UsuarioEntity implements UsuarioEntityProps {
     return right(usuarioEntity);
   }
 
-  static with(props: Omit<UsuarioEntityProps, 'senha'>) {
+  static with(props: UsuarioEntityProps) {
     return new UsuarioEntity({ ...props });
   }
 }

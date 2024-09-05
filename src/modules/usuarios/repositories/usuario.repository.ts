@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { hashSync } from 'bcrypt';
+import { compareSync, hashSync } from 'bcrypt';
 import { IUsuarioRepository } from 'src/interfaces/usuario-repository.interface';
 import { PrismaService } from 'src/modules/prisma/prisma.service';
 import { VendedorEntity } from 'src/modules/vendedores/entities/vendedor.entity';
@@ -28,7 +28,7 @@ export class UsuarioRepository implements IUsuarioRepository {
         usr_email: usuarioEntity.email,
         usr_nome: usuarioEntity.nome,
         usr_permissao: usuarioEntity.permissao,
-        usr_senha: hashSync(usuarioEntity.senha, 10),
+        usr_senha: hashSync(usuarioEntity.senha || '', 10),
         usr_valor_saldo: 0,
         vendedor,
       },
@@ -49,6 +49,7 @@ export class UsuarioRepository implements IUsuarioRepository {
       email: usuarioDb.usr_email,
       permissao: usuarioDb.usr_permissao,
       valor_saldo: usuarioDb.usr_valor_saldo,
+      senha: usuarioDb.usr_senha,
     });
 
     if (usuarioEntity.permissao === 'VENDEDOR' && usuarioDb.vendedor) {
@@ -61,5 +62,9 @@ export class UsuarioRepository implements IUsuarioRepository {
     }
 
     return right(usuarioEntity);
+  }
+
+  compararSenhas(senhaPlana: string, senhaHash: string): boolean {
+    return compareSync(senhaPlana, senhaHash);
   }
 }
