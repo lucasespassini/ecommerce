@@ -27,7 +27,7 @@ model Usuario {
   usr_permissao               Permissao
   vendedor                    Vendedor?
   usuario_depositos_historico UsuarioDepositoHistorico[]
-  compras                     Compra[]
+  carrinhos                   Carrinho[]
 
   @@map("usuarios")
 }
@@ -53,20 +53,6 @@ model UsuarioDepositoHistorico {
   @@map("usuario_deposito_historico")
 }
 
-model Compra {
-  cmp_ordem_id           String               @unique @db.Char(26)
-  cmp_usr_id             String               @db.Char(26)
-  cmp_prd_id             String               @db.Char(26)
-  cmp_pvv_id             String               @db.Char(26)
-  cmp_data_compra        DateTime             @db.DateTime
-  usuario                Usuario              @relation(fields: [cmp_usr_id], references: [usr_id])
-  produto                Produto              @relation(fields: [cmp_prd_id], references: [prd_id])
-  produto_vigencia_valor ProdutoVigenciaValor @relation(fields: [cmp_pvv_id], references: [pvv_id])
-
-  @@id([cmp_usr_id, cmp_prd_id])
-  @@map("compras")
-}
-
 model Produto {
   prd_id                   String                 @id @db.Char(26)
   prd_vdd_id               String                 @db.Char(26)
@@ -74,8 +60,8 @@ model Produto {
   prd_avaliacao            Int                    @default(0) @db.UnsignedTinyInt
   prd_estoque              Int                    @default(0) @db.UnsignedSmallInt
   vendedor                 Vendedor               @relation(fields: [prd_vdd_id], references: [vdd_id])
-  compras                  Compra[]
   produto_vigencia_valores ProdutoVigenciaValor[]
+  carrinho_produtos        CarrinhoProdutos[]
 
   @@map("produtos")
 }
@@ -86,7 +72,36 @@ model ProdutoVigenciaValor {
   pvv_valor_vigencia Decimal  @db.Decimal(10, 2)
   pvv_data_inicio    DateTime @default(dbgenerated("CURRENT_TIMESTAMP")) @db.DateTime
   produto            Produto  @relation(fields: [pvv_prd_id], references: [prd_id])
-  compras            Compra[]
 
   @@map("produto_valor_vigencia")
+}
+
+model Carrinho {
+  crh_id            String             @id @db.Char(26)
+  crh_usr_id        String             @db.Char(26)
+  crh_cmp_id        String?            @unique @db.Char(26)
+  usuario           Usuario            @relation(fields: [crh_usr_id], references: [usr_id])
+  compra            Compra?            @relation(fields: [crh_cmp_id], references: [cmp_id])
+  carrinho_produtos CarrinhoProdutos[]
+
+  @@map("carrinho")
+}
+
+model CarrinhoProdutos {
+  crh_id   String   @db.Char(26)
+  prd_id   String   @db.Char(26)
+  carrinho Carrinho @relation(fields: [crh_id], references: [crh_id])
+  produto  Produto  @relation(fields: [prd_id], references: [prd_id])
+
+  @@id([crh_id, prd_id])
+  @@map("carrinho_produtos")
+}
+
+model Compra {
+  cmp_id          String    @id @unique @db.Char(26)
+  cmp_valor_total Decimal   @db.Decimal(10, 2)
+  cmp_data_compra DateTime  @default(dbgenerated("CURRENT_TIMESTAMP")) @db.DateTime
+  carrinho        Carrinho?
+
+  @@map("compras")
 }
