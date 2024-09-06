@@ -3,12 +3,12 @@ import { Usecase } from 'src/interfaces/usecase.interface';
 import { ProdutoEntity } from '../entities/produto.entity';
 import { ProdutoRepository } from '../repositories/produto.repository';
 
-type BuscarPorIdProdutoUsecaseInput = { produto_id: string };
-type BuscarPorIdProdutoUsecaseOutput = ProdutoEntity;
+type BuscarProdutoPorIdUsecaseInput = { produto_id: string };
+type BuscarProdutoPorIdUsecaseOutput = ProdutoEntity;
 
-export class BuscarPorIdProdutoUsecase
+export class BuscarProdutoPorIdUsecase
   implements
-    Usecase<BuscarPorIdProdutoUsecaseInput, BuscarPorIdProdutoUsecaseOutput>
+    Usecase<BuscarProdutoPorIdUsecaseInput, BuscarProdutoPorIdUsecaseOutput>
 {
   constructor(
     @Inject(ProdutoRepository)
@@ -17,7 +17,7 @@ export class BuscarPorIdProdutoUsecase
 
   async execute({
     produto_id,
-  }: BuscarPorIdProdutoUsecaseInput): Promise<BuscarPorIdProdutoUsecaseOutput> {
+  }: BuscarProdutoPorIdUsecaseInput): Promise<BuscarProdutoPorIdUsecaseOutput> {
     const produtoEntity = await this.produtoRepository.buscarPorId(produto_id);
 
     if (produtoEntity.isLeft())

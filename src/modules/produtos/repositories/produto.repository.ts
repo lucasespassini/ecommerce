@@ -48,4 +48,28 @@ export class ProdutoRepository implements IProdutoRepository {
 
     return right(produtoEntity);
   }
+
+  async buscarTodos(vendedor_id?: string): Promise<ProdutoEntity[]> {
+    const produtosDb = await this.prisma.produto.findMany({
+      include: {
+        produto_vigencia_valores: { take: 1, orderBy: { pvv_id: 'desc' } },
+        vendedor: true,
+      },
+      where: { prd_vdd_id: vendedor_id },
+    });
+
+    const produtosEntity: ProdutoEntity[] = produtosDb.map((produtoDb) => ({
+      id: produtoDb.prd_id,
+      nome: produtoDb.prd_nome,
+      valor:
+        produtoDb.produto_vigencia_valores[0].pvv_valor_vigencia.toNumber(),
+      estoque: produtoDb.prd_estoque,
+      vendedor: {
+        id: produtoDb.vendedor.vdd_id,
+        nome: produtoDb.vendedor.vdd_nome,
+      },
+    }));
+
+    return produtosEntity;
+  }
 }

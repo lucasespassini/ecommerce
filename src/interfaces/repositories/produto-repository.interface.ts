@@ -4,4 +4,5 @@ import { Either } from 'src/utils/either';
 export interface IProdutoRepository {
   criar(produtoEntity: ProdutoEntity): Promise<void>;
   buscarPorId(produto_id: string): Promise<Either<null, ProdutoEntity>>;
+  buscarTodos(vendedor_id?: string): Promise<ProdutoEntity[]>;
 }

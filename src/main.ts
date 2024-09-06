@@ -12,6 +12,7 @@ async function bootstrap() {
       stopAtFirstError: true,
     }),
   );
-  await app.listen(3000);
+  const PORT = process.env.PORT || 3333;
+  await app.listen(PORT);
 }
 bootstrap();

@@ -29,7 +29,7 @@ export class ProdutoEntity implements ProdutoEntityProps {
   }
 
   static create(
-    props: Omit<ProdutoEntityProps, 'id' | 'vendedor.nome'>,
+    props: Omit<ProdutoEntityProps, 'id'>,
   ): Either<string[], ProdutoEntity> {
     const produtoEntity = new ProdutoEntity({ ...props, id: ulid() });
 

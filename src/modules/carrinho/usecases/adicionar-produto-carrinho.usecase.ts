@@ -1,7 +1,7 @@
 import { Inject } from '@nestjs/common';
 import { Payload } from 'src/interfaces/payload.interface';
 import { Usecase } from 'src/interfaces/usecase.interface';
-import { BuscarPorIdProdutoUsecase } from 'src/modules/produtos/usecases/buscar-por-id-produto.usecase';
+import { BuscarProdutoPorIdUsecase } from 'src/modules/produtos/usecases/buscar-produto-por-id.usecase';
 import { CarrinhoRepository } from '../repositories/carrinho.repository';
 
 type AdicionarProdutoAoCarrinhoUsecaseInput = {
@@ -15,14 +15,14 @@ export class AdicionarProdutoAoCarrinhoUsecase
   constructor(
     @Inject(CarrinhoRepository)
     private readonly carrinhoRepository: CarrinhoRepository,
-    private readonly buscarPorIdProdutoUsecase: BuscarPorIdProdutoUsecase,
+    private readonly buscarProdutoPorIdUsecase: BuscarProdutoPorIdUsecase,
   ) {}
 
   async execute({
     payload,
     produto_id,
   }: AdicionarProdutoAoCarrinhoUsecaseInput): Promise<void> {
-    const produtoEntity = await this.buscarPorIdProdutoUsecase.execute({
+    const produtoEntity = await this.buscarProdutoPorIdUsecase.execute({
       produto_id,
     });
 
