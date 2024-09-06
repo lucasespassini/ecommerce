@@ -1,9 +1,11 @@
 import { Injectable } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { compareSync, hashSync } from 'bcrypt';
 import { IUsuarioRepository } from 'src/interfaces/repositories/usuario-repository.interface';
 import { PrismaService } from 'src/modules/prisma/prisma.service';
 import { VendedorEntity } from 'src/modules/vendedores/entities/vendedor.entity';
 import { Either, left, right } from 'src/utils/either';
+import { ulid } from 'ulid';
 import { UsuarioEntity } from '../entities/usuario.entity';
 
 @Injectable()
@@ -17,8 +19,7 @@ export class UsuarioRepository implements IUsuarioRepository {
             create: {
               vdd_id: usuarioEntity.vendedor.id,
               vdd_nome: usuarioEntity.vendedor.nome,
-              vdd_avaliacao: 0,
-            },
+            } as Prisma.VendedorCreateWithoutUsuarioInput,
           }
         : {};
 
@@ -66,5 +67,28 @@ export class UsuarioRepository implements IUsuarioRepository {
 
   compararSenhas(senhaPlana: string, senhaHash: string): boolean {
     return compareSync(senhaPlana, senhaHash);
+  }
+
+  async depositar(usuario_id: string, valor_deposito: number): Promise<void> {
+    const usuarioDb = await this.prisma.usuario.findUnique({
+      where: { usr_id: usuario_id },
+    });
+
+    if (!usuarioDb) return;
+
+    await this.prisma.usuarioDepositoHistorico.create({
+      data: {
+        udh_id: ulid(),
+        udh_usr_id: usuario_id,
+        udh_valor: valor_deposito,
+      },
+    });
+
+    await this.prisma.usuario.update({
+      data: {
+        usr_valor_saldo: usuarioDb.usr_valor_saldo.toNumber() + valor_deposito,
+      },
+      where: { usr_id: usuario_id },
+    });
   }
 }
