@@ -7,7 +7,7 @@ import { validateSchema } from 'src/utils/validateSchema';
 import { ulid } from 'ulid';
 import { z } from 'zod';
 
-const produtoEntitySchema = z.object({
+export const produtoEntitySchema = z.object({
   id: z.string().ulid(),
   nome: z.string().min(3, 'nome do produto inválido'),
   estoque: z.number().min(0, 'estoque inválido'),
